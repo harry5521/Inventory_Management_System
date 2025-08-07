@@ -44,6 +44,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Custom Auth Middleware
+    'core.middlewares.LoginRequiredMiddleware',
+    'core.middlewares.AuthenticatedUserMiddleware',
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

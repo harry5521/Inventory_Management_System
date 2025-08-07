@@ -1,5 +1,6 @@
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from django.views.generic.edit import FormView
 from .forms import EmployeeLoginForm
 from .models import Employee
@@ -28,7 +29,8 @@ class EmployeeLoginView(FormView):
             request=self.request,
             work_email=work_email,
             department=department,
-            password=password
+            password=password,
+            emp=is_employee
         )
 
         if employee is not None:
@@ -38,11 +40,12 @@ class EmployeeLoginView(FormView):
             form.add_error('password', 'Invalid password for this email')
             return self.form_invalid(form)
 
-        
-
-
-
-
 
 class EmployeeDashboardView(TemplateView):
     template_name = 'core/dashboard.html'
+
+
+class EmployeeLogoutView(View):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('core:employee_login')

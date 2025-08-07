@@ -1,1 +1,8 @@
 <h1>Employee Dashboard</h1>
+
+<!-- <a href="{% url 'core:employee_logout' %}">Logout</a> -->
+
+<form action="{% url 'core:employee_logout' %}" method="post" class="space-y-4">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>
