@@ -21,12 +21,12 @@ class LoginRequiredMiddleware:
         """
         Process the view before it is called.
         """
+        # if request.path.startswith('/admin/'):
+        #     return None
         if not request.user.is_authenticated:
-            if request.resolver_match.url_name in ['employee_login']:
+            if request.resolver_match.url_name in ['employee_login'] or request.path.startswith('/admin/'):
                 return None
             return HttpResponse("Unauthorized", status=401)
-        
-        return None
     
 
 class AuthenticatedUserMiddleware:
@@ -45,6 +45,8 @@ class AuthenticatedUserMiddleware:
         """
         Process the view before it is called.
         """
+        # if request.path.startswith('/admin/'):
+        #     return None
         if request.user.is_authenticated:
             if request.resolver_match.url_name in ['employee_login']:
                 return redirect('core:employee_dashboard')

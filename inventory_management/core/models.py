@@ -11,12 +11,12 @@ class Department(models.Model):
     def __str__(self):
         return self.dep_name
     
-class Role(models.Model):
-    role_id = models.CharField(max_length=10, primary_key=True)
-    role_name = models.CharField(max_length=100)
+# class Role(models.Model):
+#     role_id = models.CharField(max_length=10, primary_key=True)
+#     role_name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.role_name
+#     def __str__(self):
+#         return self.role_name
 
 class Employee(AbstractUser):
     # Additional fields can be added here if needed
@@ -25,7 +25,7 @@ class Employee(AbstractUser):
     work_email = models.EmailField(unique=True)
     phone_no = models.CharField(max_length=15, blank=True, null=True)
     password = models.CharField(max_length=128)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True, related_name='employees_role')
+    # role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True, related_name='employees_role')
 
     username = None
     USERNAME_FIELD = 'work_email'
@@ -39,4 +39,4 @@ class Employee(AbstractUser):
         ordering = ['full_name']
         
     def __str__(self):
-        return f"{self.full_name} - {self.role} - {self.department}"
+        return f"{self.full_name}"

@@ -27,10 +27,8 @@ class EmployeeLoginView(FormView):
         
         employee = authenticate(
             request=self.request,
-            work_email=work_email,
-            department=department,
-            password=password,
-            emp=is_employee
+            employee=is_employee,
+            password=password
         )
 
         if employee is not None:

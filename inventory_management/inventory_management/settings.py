@@ -44,14 +44,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # Custom Auth Middleware
-    'core.middlewares.LoginRequiredMiddleware',
-    'core.middlewares.AuthenticatedUserMiddleware',
-    
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+
+    # Custom Auth Middleware
+    'core.middlewares.LoginRequiredMiddleware',
+    'core.middlewares.AuthenticatedUserMiddleware',
+
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -93,6 +94,8 @@ DATABASES = {
         }
 }
 
+AUTH_USER_MODEL = 'core.Employee'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -125,10 +128,11 @@ USE_I18N = True
 USE_TZ = True
 
 
-AUTH_USER_MODEL = 'core.Employee'
-AUTHENTICATION_BACKENDS = ['core.backends.EmployeeAuthBackend',
-                           'django.contrib.auth.backends.ModelBackend',
-                           ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'core.backends.EmployeeAuthBackend',       
+]
+
 
 
 # Static files (CSS, JavaScript, Images)
