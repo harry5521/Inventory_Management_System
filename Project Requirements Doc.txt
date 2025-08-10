@@ -1,0 +1,162 @@
+Got it — you basically want a **clear, role-based functional requirements document** for your Inventory & Invoice Management App, so you’ll know exactly *what* to implement for each role before diving into code.
+
+Here’s a **structured breakdown** based on your roles (`Admin`, `Moderator`, `Manager`, `Employee`) and the typical scope of such a system:
+
+---
+
+## **📄 Functional Requirements Document — Inventory & Invoice Management System**
+
+### **1. Core Modules of the Application**
+
+Your app will have the following main modules:
+
+1. **Authentication & Role Management**
+
+   * Secure login/logout for each role.
+   * Role-based dashboard UI and permissions.
+
+2. **Inventory Management**
+
+   * Add, update, delete products.
+   * Track stock levels in real time.
+   * Set reorder thresholds.
+
+3. **Supplier Management**
+
+   * Store supplier details.
+   * Manage purchase orders.
+
+4. **Sales & Invoice Management**
+
+   * Create and send invoices.
+   * Record payments.
+   * Generate receipts.
+
+5. **Reports & Analytics**
+
+   * Sales reports, inventory reports, purchase reports.
+   * Download/export data.
+
+6. **Notifications & Alerts**
+
+   * Low stock alerts.
+   * Payment due alerts.
+
+---
+
+### **2. Roles & Their Functionalities**
+
+#### **🔹 Admin**
+
+*(Using Django’s built-in admin panel — no custom dashboard needed)*
+
+* Manage all data in the system (CRUD on any model).
+* Create/assign/remove roles for users.
+* Full access to system configuration.
+* View all system logs and audit trails.
+
+---
+
+#### **🔹 Moderator**
+
+*(Middle role between Admin and Manager)*
+
+* Approve or reject manager requests (like adding products, editing stock).
+* Approve/reject large purchase orders.
+* Monitor system usage and flag suspicious activity.
+* View all reports but **cannot** delete critical records.
+* Can disable/enable employee accounts.
+
+---
+
+#### **🔹 Manager**
+
+*(Oversees operational flow)*
+
+* **Inventory**
+
+  * Add new products (pending Moderator approval if needed).
+  * Update product details (price, quantity, supplier).
+  * Remove/discontinue products (with approval if required).
+* **Suppliers**
+
+  * Add/edit supplier info.
+  * Create purchase orders to suppliers.
+* **Sales & Invoices**
+
+  * Create customer invoices.
+  * Record payments and mark invoices as paid.
+  * Apply discounts (within set limits).
+* **Reports**
+
+  * View stock, sales, and purchase reports.
+* **Staff**
+
+  * Assign tasks to employees.
+  * Approve employee leave/shift requests.
+
+---
+
+#### **🔹 Employee**
+
+*(Day-to-day task handler)*
+
+* View assigned tasks from manager.
+* Update stock levels after sales or purchases.
+* Create draft invoices (needs manager approval).
+* Mark deliveries as completed.
+* Report damaged or missing items.
+* View their own performance stats (sales handled, tasks completed).
+
+---
+
+### **3. Feature Responsibility Matrix**
+
+| Feature                   | Admin | Moderator | Manager | Employee   |
+| ------------------------- | ----- | --------- | ------- | ---------- |
+| Create/Manage Users       | ✅     | ❌         | ❌       | ❌          |
+| Assign Roles              | ✅     | ❌         | ❌       | ❌          |
+| Add Products              | ✅     | Approve   | Request | ❌          |
+| Edit Products             | ✅     | Approve   | ✅       | ❌          |
+| Delete Products           | ✅     | Approve   | Request | ❌          |
+| Create Purchase Orders    | ✅     | Approve   | ✅       | ❌          |
+| Approve Large Purchases   | ✅     | ✅         | ❌       | ❌          |
+| Create Invoices           | ✅     | ✅         | ✅       | Draft Only |
+| Record Payments           | ✅     | ✅         | ✅       | ❌          |
+| View Reports              | ✅     | ✅         | ✅       | Limited    |
+| Manage Suppliers          | ✅     | ✅         | ✅       | ❌          |
+| Assign Tasks to Employees | ✅     | ✅         | ✅       | ❌          |
+| Mark Deliveries Completed | ❌     | ❌         | ✅       | ✅          |
+
+---
+
+### **4. Implementation Flow Idea**
+
+1. **Start with Authentication & Role Permissions**
+
+   * Create a custom user model with roles.
+   * Implement role-based middleware for access control.
+
+2. **Implement Inventory Module**
+
+   * CRUD for products (with approval logic where needed).
+
+3. **Implement Sales & Invoice Module**
+
+   * Draft → Approval → Final invoice flow.
+
+4. **Implement Supplier Management**
+
+   * Supplier CRUD and purchase order handling.
+
+5. **Implement Reports & Alerts**
+
+   * Use Django ORM queries for analytics.
+
+6. **Finalize Role-Specific Dashboards**
+
+   * Show only relevant data/actions per role.
+
+---
+
+If you want, I can now prepare a **developer-oriented step-by-step implementation plan** for these features so you know exactly in which order to code them. That would make building all these functionalities way easier.

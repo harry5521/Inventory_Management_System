@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from django.http import HttpResponseServerError
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
 from django.views.generic.edit import FormView
@@ -6,13 +7,25 @@ from .forms import EmployeeLoginForm
 from .models import Employee
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import Group
 
 # Create your views here.
 
 class EmployeeLoginView(FormView):
     template_name = 'core/signin.html'
     form_class = EmployeeLoginForm
-    success_url = reverse_lazy('core:employee_dashboard')
+    # success_url = reverse_lazy('core:employee_dashboard')
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.groups.filter(name='Employee').exists():
+            return reverse_lazy('core:employee_dashboard')
+        elif user.groups.filter(name='Manager').exists():
+            return reverse_lazy('core:manager_dashboard')
+        elif user.groups.filter(name='Moderator').exists():
+            return reverse_lazy('core:moderator_dashboard')
+        else:
+            return HttpResponseServerError("User does not authenticate to any dashboard.")
 
     def form_valid(self, form):
         work_email = form.cleaned_data['work_email']
@@ -40,7 +53,13 @@ class EmployeeLoginView(FormView):
 
 
 class EmployeeDashboardView(TemplateView):
-    template_name = 'core/dashboard.html'
+    template_name = 'core/employees_dashboard.html'
+
+class ManagerDashboardView(TemplateView):
+    template_name = 'core/managers_dashboard.html'
+
+class ModeratorDashboardView(TemplateView):
+    template_name = 'core/moderator_dashboard.html'
 
 
 class EmployeeLogoutView(View):

@@ -24,7 +24,7 @@ class Employee(AbstractUser):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True, related_name='employees_department')
     work_email = models.EmailField(unique=True)
     phone_no = models.CharField(max_length=15, blank=True, null=True)
-    password = models.CharField(max_length=128)
+    # password = models.CharField(max_length=128)
     # role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True, related_name='employees_role')
 
     username = None

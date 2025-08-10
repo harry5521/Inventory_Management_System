@@ -1,0 +1,147 @@
+Got it — you basically want a **role–functionality blueprint** so you know exactly *what* to build and *who* (which role) will do it before you start coding.
+
+Here’s how I’ll break it down:
+
+---
+
+## **Inventory & Invoice Management System — Functional Blueprint**
+
+### **Core Modules**
+
+Regardless of role, the system will have these main modules:
+
+1. **Authentication & Role-Based Access Control**
+2. **Employee & User Management**
+3. **Inventory Management** (products, stock, suppliers)
+4. **Order & Sales Management**
+5. **Invoice Generation & Payments**
+6. **Reports & Analytics**
+7. **Activity Logs & Notifications**
+
+---
+
+### **Roles & Responsibilities**
+
+#### **1. Admin (Superuser, uses Django Admin Panel)**
+
+* **Full control over all data** in the system.
+* Create/update/delete any record.
+* Assign roles (Manager, Moderator, Employee).
+* Manage system settings, permissions, and configurations.
+* Access *all* reports and logs.
+* Add/remove warehouses or branches.
+
+> **You** will not code a custom dashboard for admin — they’ll use Django Admin.
+
+---
+
+#### **2. Manager**
+
+*(Has a custom dashboard)*
+**Responsibilities:**
+
+* **Inventory:**
+
+  * Add new products.
+  * Update product details (name, price, stock level).
+  * Manage suppliers (create, update, delete).
+* **Orders:**
+
+  * Approve/reject orders made by employees.
+  * Assign orders to employees for delivery.
+* **Invoices:**
+
+  * Generate & approve invoices.
+  * Apply discounts or adjust totals.
+* **Reports:**
+
+  * View daily, weekly, monthly sales.
+  * Check stock reports (low stock alerts).
+* **Employees:**
+
+  * Create & manage employee accounts.
+  * Assign tasks and monitor work progress.
+* **Moderation:**
+
+  * Approve changes made by moderators before they go live.
+
+---
+
+#### **3. Moderator**
+
+*(Has a custom dashboard — limited version of Manager)*
+**Responsibilities:**
+
+* **Inventory:**
+
+  * Propose new products or changes (sent to Manager for approval).
+  * Update stock quantities for existing products.
+* **Orders:**
+
+  * Process orders placed by employees/customers.
+  * Update order status (Pending → Packed → Dispatched).
+* **Invoices:**
+
+  * Create invoices but can’t approve final — must be approved by Manager.
+* **Reports:**
+
+  * View basic sales and stock data (read-only).
+* **Moderation tasks:**
+
+  * Review employee data entries before forwarding to Manager.
+
+---
+
+#### **4. Employee**
+
+*(Has a custom dashboard — minimal tools)*
+**Responsibilities:**
+
+* **Orders:**
+
+  * Create new customer orders.
+  * Update delivery status of assigned orders.
+* **Invoices:**
+
+  * Generate invoices for their own sales only.
+* **Stock Requests:**
+
+  * Request restocking of products.
+* **Customers:**
+
+  * Add new customer records (basic info).
+* **Reports:**
+
+  * View personal performance stats (sales, deliveries).
+
+---
+
+### **Suggested Development Order**
+
+To avoid chaos, build in this sequence:
+
+1. **Authentication & Role System**
+
+   * Create roles (Admin, Manager, Moderator, Employee) in DB.
+   * Implement middleware or decorators for access control.
+2. **Inventory Management**
+
+   * Products, Categories, Suppliers, Stock levels.
+3. **Orders & Invoices**
+
+   * CRUD operations, status tracking, PDF invoice generation.
+4. **Reports & Analytics**
+
+   * Sales, stock, performance reports.
+5. **Employee Management**
+
+   * CRUD for employees (by manager/admin).
+6. **Notifications & Activity Logs**
+
+   * Email or dashboard alerts for approvals, low stock, etc.
+
+---
+
+If you want, I can now make a **clear table** mapping **Modules → Operations → Roles Allowed**, so you’ll have a quick “cheat sheet” for development.
+
+Do you want me to prepare that? That will make coding order crystal clear.

@@ -12,7 +12,7 @@ class EmployeeAuthBackend(ModelBackend):
         try:
             
             # if employee.check_password(password):
-            if employee.password == password:
+            if employee.check_password(password):
                 return employee        
         except Employee.DoesNotExist:
             return None
