@@ -23,4 +23,5 @@ urlpatterns = [
 
     # Products for managers
     path('manager-dashboard/products/', include(('products.urls', 'products'), namespace='products')),
+    path('manager-dashboard/suppliers/', include(('suppliers.urls', 'suppliers'), namespace='suppliers')),
 ]
