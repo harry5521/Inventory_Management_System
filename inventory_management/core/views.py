@@ -55,6 +55,13 @@ class EmployeeLoginView(FormView):
 class EmployeeDashboardView(TemplateView):
     template_name = 'core/employees_dashboard.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        groups = self.request.user.groups.all()
+        context['groups'] = groups
+        return context
+    
+
 class ManagerDashboardView(TemplateView):
     template_name = 'core/managers_dashboard.html'
 

@@ -21,7 +21,9 @@
             <div class="d-flex align-items-center">
                 <span class="text-dark me-3 fw-semibold">
                     {{ request.user.full_name }}
-                    <small class="text-muted">({{ request.user.group.name }})</small>
+                    {% for group in groups %}
+                        <small class="text-muted">({{ group.name }})</small>
+                    {% endfor %}
                 </span>
                 <form method="POST" action="{% url 'core:employee_logout' %}" class="m-0">
                     {% csrf_token %}

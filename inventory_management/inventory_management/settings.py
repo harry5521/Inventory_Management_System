@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     # External Apps
     'core.apps.CoreConfig',
+    'products.apps.ProductsConfig',
+    'suppliers.apps.SuppliersConfig',
 ]
 
 MIDDLEWARE = [
