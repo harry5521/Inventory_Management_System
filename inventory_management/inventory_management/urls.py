@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('core.urls')),
+    path('', include(('core.urls', 'core'), namespace='core')),
 
     # Managers Links
     path('manager-dashboard/products/', include(('products.urls', 'products'), namespace='products')),

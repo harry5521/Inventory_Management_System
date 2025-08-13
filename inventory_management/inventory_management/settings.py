@@ -54,7 +54,8 @@ MIDDLEWARE = [
 
     # Custom Auth Middleware
     'core.middlewares.LoginRequiredMiddleware',
-    'core.middlewares.AuthenticatedUserMiddleware',
+    'core.middlewares.LoginPageRestrictionMiddleware',
+    'core.middlewares.GroupNameBasedURLRestrictionMiddleware',
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

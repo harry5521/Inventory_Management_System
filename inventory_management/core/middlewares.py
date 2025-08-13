@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 
 class LoginRequiredMiddleware:
     """
-    Middleware to handle authentication for the inventory management system.
+    Middleware to handle that non-authenticated users cannot access dashboards and certain views.
     """
 
     def __init__(self, get_response):
@@ -29,9 +29,9 @@ class LoginRequiredMiddleware:
             return HttpResponse("Unauthorized", status=401)
     
 
-class AuthenticatedUserMiddleware:
+class LoginPageRestrictionMiddleware:
     """
-    Middleware to ensure that the user is authenticated.
+    Middleware to ensure that authenticated users cannot access the login page.
     """
 
     def __init__(self, get_response):
@@ -63,3 +63,39 @@ class AuthenticatedUserMiddleware:
                 return HttpResponseServerError("You are doing something wrong.")
         return None
         
+
+class GroupNameBasedURLRestrictionMiddleware:
+    """
+    Middleware to ensure that users can only access views within their assigned roles and namespaces.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        """
+        Process the view before it is called.
+        """
+
+        user_map = {
+            'Manager': '/manager-dashboard/',
+            'Employee': '/employee-dashboard/',
+            'Moderator': '/moderator-dashboard/',
+        }
+
+        if request.user.is_authenticated:
+            user_groups = [group.name for group in request.user.groups.all()]
+            url_path = request.path
+
+            for group, allowed_url in user_map.items():
+                if url_path.startswith(allowed_url):
+                    if group in user_groups:
+                        return None
+                    else:
+                        return HttpResponseServerError(f"Access denied. Your Group {user_groups} have No permission to access '{url_path}' URL")
+
+        return None
