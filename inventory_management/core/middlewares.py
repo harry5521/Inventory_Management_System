@@ -47,8 +47,19 @@ class AuthenticatedUserMiddleware:
         """
         # if request.path.startswith('/admin/'):
         #     return None
+        
         if request.user.is_authenticated:
             if request.resolver_match.url_name in ['employee_login']:
-                return redirect('core:employee_dashboard')
-            return None
+                # Check user's group or role
+                if request.user.groups.filter(name='Manager').exists():
+                    return redirect('core:manager_dashboard')
+                elif request.user.groups.filter(name='Employee').exists():
+                    return redirect('core:employee_dashboard')
+                elif request.user.groups.filter(name='Moderator').exists():
+                    return redirect('core:moderator_dashboard')
+                elif request.user.is_superuser:
+                    return redirect('/admin/')
+                # Fallback if no group matched
+                return HttpResponseServerError("You are doing something wrong.")
+        return None
         

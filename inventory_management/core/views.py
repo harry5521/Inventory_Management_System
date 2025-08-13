@@ -29,18 +29,12 @@ class EmployeeLoginView(FormView):
 
     def form_valid(self, form):
         work_email = form.cleaned_data['work_email']
-        department = form.cleaned_data['department']
         password = form.cleaned_data['password']
 
-        try:
-            is_employee = Employee.objects.get(work_email=work_email, department=department)
-        except Employee.DoesNotExist:
-            form.add_error('work_email', 'Employee not found with provided email and department.')
-            return self.form_invalid(form)
         
         employee = authenticate(
             request=self.request,
-            employee=is_employee,
+            work_email=work_email,
             password=password
         )
 
@@ -48,7 +42,7 @@ class EmployeeLoginView(FormView):
             login(self.request, employee)
             return super().form_valid(form)
         else:
-            form.add_error('password', 'Invalid password for this email')
+            form.add_error('work_email', 'Invalid Email or Password')
             return self.form_invalid(form)
 
 
