@@ -21,7 +21,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'products:products_view' %}">Products</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'suppliers:suppliers_view' %}">Suppliers</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'orders:orders_view' %}">Orders</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
                     <li class="nav-item">
                         <form action="{% url 'core:employee_logout' %}" method="post">

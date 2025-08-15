@@ -6,151 +6,269 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Orders</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border-radius: 12px;
+        }
+
+        .form-section {
+            border-left: 4px solid #0d6efd;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+        #sub-table th {
+            background-color: white;
+            color: black;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
+<body>
 
     <div class="container py-5">
-        <!-- Page Title -->
+        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold">Manage Orders</h2>
-            <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+            <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary btn-sm">Back to Dashboard</a>
         </div>
 
-        <!-- Product Create Form -->
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-primary text-white">
+        <!-- Create Order Form -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Add New Order</h5>
+                <button class="btn btn-light btn-sm fw-bold bg-white text-primary" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#orderFormSection">
+                    Show/Hide
+                </button>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="d-flex d-flex-row justify-content-between">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.name.label }}</label>
-                                {{ form.name }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.contact_person.label }}</label>
-                                {{ form.contact_person }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.phone.label }}</label>
-                                {{ form.phone }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.email.label }}</label>
-                                {{ form.email }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.city.label }}</label>
-                                {{ form.city }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.country.label }}</label>
-                                {{ form.country }}
+            <div id="orderFormSection" class="collapse show">
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <!-- Order Details -->
+                        <div class="form-section">
+                            <h6 class="fw-bold mb-3">Order Details</h6>
+                            <div class="row g-3">
+                                {% for field in order_form %}
+                                <div class="col-md-6">
+                                    {{ field.label_tag }} {{ field }}
+                                    {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
-                        <div class="col-md-4 mx-3">
-                            <label class="form-label">{{ form.address.label }}</label>
-                            {{ form.address }}
+
+                        <!-- Order Items -->
+                        <div class="form-section">
+                            <h6 class="fw-bold mb-3">Order Items</h6>
+                            <p class="text-secondary fw-bold small">Note: 5 products are max limit for each order. you can also leave empty any item.</p>
+                            {{ formset.management_form }}
+                            {% for form in formset %}
+                            {{ form.id }} {# keep hidden id field here #}
+                            {{ form.order }} {# keep hidden order field here #}
+
+                            <div class="row g-3 align-items-end mb-2">
+                                <div class="col-md-6">
+                                    {{ form.product.label_tag }} {{ form.product }}
+                                    {% if form.product.errors %}
+                                    <div class="text-danger small">{{ form.product.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form.quantity.label_tag }} {{ form.quantity }}
+                                    {% if form.quantity.errors %}
+                                    <div class="text-danger small">{{ form.quantity.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="mt-5 w-50 m-auto">
-                        <button type="submit" class="btn btn-success w-100"> {% if form.instance.pk %}Update Order{% else %}Add Order{% endif %}</button>
-                    </div>
-                </form>
+
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary px-4">Create Order</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <!-- Products List Table -->
-        {% if form.instance.pk %}
-        
-        {% else %}
+        <!-- Orders Table -->
+        <!-- Orders Table -->
         <div class="card shadow-sm">
             <div class="card-header bg-dark text-white">
                 <h5 class="mb-0">Order List</h5>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0 text-center">
-                    <thead class="table-light">
+            <div class="table-responsive">
+                <table class="table table-striped align-middle text-center mb-0">
+                    <thead>
                         <tr>
+                            <th></th> <!-- Arrow column -->
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Contact Person</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>City</th>
-                            <th>Country</th>
+                            <th>Order No</th>
+                            <th>Supplier</th>
+                            <th>Created By</th>
+                            <th>Approved By</th>
+                            <th>Status</th>
+                            <th>Payment Method</th>
+                            <th>Total Amount</th>
+                            <th>Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for supplier in suppliers %}
+                        {% for order in orders %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ supplier.name }}</td>
-                            <td>{{ supplier.contact_person }}</td>
-                            <td>{{ supplier.phone }}</td>
-                            <td>{{ supplier.email }}</td>
-                            <td>{{ supplier.city }}</td>
-                            <td>{{ supplier.country }}</td>
-                            <td class="d-flex m-auto justify-content-center gap-2">
-                                <form action="{% url 'suppliers:edit_supplier' supplier.pk %}" >
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-warning btn-sm">Edit</button>
-                                </form>
-
-                                <!-- Trigger Modal -->
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ supplier.pk }}">
-                                    Delete
+                            <td>
+                                <button type="button" class="btn btn-sm btn-secondary"
+                                    onclick="toggleItems('{{ order.pk }}')">
+                                    ⬇
                                 </button>
 
-                                <!-- Delete Confirmation Modal -->
-                                <div class="modal fade" id="deleteModal{{ supplier.pk }}" tabindex="-1"
-                                    aria-labelledby="deleteModalLabel{{ supplier.pk }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered"> <!-- Centered vertically -->
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-danger text-white">
-                                                <h5 class="modal-title" id="deleteModalLabel{{ supplier.pk }}">Confirm
-                                                    Deletion</h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-center">
-                                                <p class="mb-0">Are you sure you want to delete <strong>{{ supplier.name }}</strong>?</p>
-                                            </div>
-                                            <div class="modal-footer justify-content-center">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{% url 'suppliers:delete_supplier' supplier.pk %}"
-                                                    method="post">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </td>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ order.order_number }}</td>
+                            <td>{{ order.supplier.name }}</td>
+                            <td>{{ order.created_by }}</td>
+                            <td>{{ order.approved_by }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>{{ order.payment_method }}</td>
+                            <td>{{ order.total_amount }}</td>
+                            <td>{{ order.date }}</td>
+                            <td>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <form action="#">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                                    </form>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ order.pk }}">
+                                        Delete
+                                    </button>
                                 </div>
                             </td>
-
                         </tr>
+                        <!-- Collapsible Row for Order Items -->
+                        <tr id="items-{{ order.pk }}" class="order-items-box" style="display: none;">
+                            <td colspan="10" class="p-0">
+                                <table class="table table-sm mb-0">
+                                    <thead id="sub-table">
+                                        <tr>
+                                            <th>S.No</th>
+                                            <th>Order No</th>
+                                            <th>Product Item</th>
+                                            <th>Quantity</th>
+                                            <th>Unit Price</th>
+                                            <th>Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in order.items.all %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ item.order.order_number }}</td>
+                                            <td>{{ item.product.name }}</td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td>{{ item.unit_price }}</td>
+                                            <td>{{ item.total_price }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-muted text-center">No items in this order.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+
                         {% empty %}
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-3">No Suppliers available.</td>
+                            <td colspan="11" class="text-muted py-3">No Orders available.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
-        {% endif %}
+
 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function toggleItems(orderId) {
+            let row = document.getElementById(`items-${orderId}`);
+
+            if (row.style.display === "none" || row.style.display === "") {
+                row.style.display = "table-row";
+                row.classList.add("fade-in");
+            } else {
+                row.classList.add("fade-out");
+                setTimeout(() => {
+                    row.style.display = "none";
+                    row.classList.remove("fade-out");
+                }, 200); // matches animation duration
+            }
+        }
+    </script>
+
+
 </body>
 
 </html>
