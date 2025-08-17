@@ -1,0 +1,256 @@
+{% extends "manager_base.html" %}
+
+{% block title %}Manager - Products{% endblock title %}
+
+{% block extra_head %}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .form-section {
+        border-left: 4px solid #0d6efd;
+        padding-left: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .table thead th {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+    }
+
+    #sub-table th {
+        background-color: white;
+        color: black;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .fade-out {
+        animation: fadeOut 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+    }
+</style>
+
+{% endblock extra_head %}
+
+{% block content %}
+
+
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Manage Orders</h2>
+        <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+    </div>
+
+    <div class="d-flex justify-content-center my-4">
+        <div class="btn-group shadow-sm" role="group" aria-label="Quick Actions">
+            <a href="{% url 'orders:create_order' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Order
+            </a>
+            <a href="#" class="btn btn-secondary">
+                <i class="bi bi-box-seam"></i> Generate Orders Report
+            </a>
+            <a href="#" class="btn btn-info text-white">
+                <i class="bi bi-truck"></i> Suppliers
+            </a>
+            <a href="#" class="btn btn-success">
+                <i class="bi bi-receipt"></i> Orders
+            </a>
+        </div>
+    </div>
+
+
+    <!-- Orders Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Order List</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle text-center mb-0">
+                <thead>
+                    <tr>
+                        <th></th> <!-- Arrow column -->
+                        <th>#</th>
+                        <th>Order No</th>
+                        <th>Supplier</th>
+                        <th>Created By</th>
+                        <th>Approved By</th>
+                        <th>Status</th>
+                        <th>Payment Method</th>
+                        <th>Total Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-secondary"
+                                onclick="toggleItems('{{ order.pk }}')">
+                                ⬇
+                            </button>
+
+                        </td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ order.order_number }}</td>
+                        <td>{{ order.supplier.name }}</td>
+                        <td>{{ order.created_by }}</td>
+                        <td>{{ order.approved_by }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.payment_method }}</td>
+                        <td>{{ order.total_amount }}</td>
+                        <td>{{ order.date }}</td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <form action="{% url 'orders:update_order' order.pk %}" method="get">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-warning btn-sm">Update</button>
+                                </form>
+
+                                <!-- Trigger Modal -->
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ order.pk }}">
+                                    Delete
+                                </button>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="deleteModal{{ order.pk }}" tabindex="-1"
+                                    aria-labelledby="deleteModalLabel{{ order.pk }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered"> <!-- Centered vertically -->
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ order.pk }}">Confirm
+                                                    Deletion</h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <p class="mb-0">Are you sure you want to delete <strong>{{ order.order_number}}</strong>?</p>
+                                            </div>
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <form action="{% url 'orders:delete_order' order.pk %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Collapsible Row for Order Items -->
+                    <tr id="items-{{ order.pk }}" class="order-items-box" style="display: none;">
+                        <td colspan="10" class="p-0">
+                            <table class="table table-sm mb-0">
+                                <thead id="sub-table">
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Order No</th>
+                                        <th>Product Item</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ item.order.order_number }}</td>
+                                        <td>{{ item.product.name }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>{{ item.unit_price }}</td>
+                                        <td>{{ item.total_price }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-muted text-center">No items in this order.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="text-muted py-3">No Orders available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content%}
+
+
+{% block extra_scripts %}
+
+<script>
+    function toggleItems(orderId) {
+        let row = document.getElementById(`items-${orderId}`);
+
+        if (row.style.display === "none" || row.style.display === "") {
+            row.style.display = "table-row";
+            row.classList.add("fade-in");
+        } else {
+            row.classList.add("fade-out");
+            setTimeout(() => {
+                row.style.display = "none";
+                row.classList.remove("fade-out");
+            }, 200); // matches animation duration
+        }
+    }
+</script>
+
+{% endblock extra_scripts %}

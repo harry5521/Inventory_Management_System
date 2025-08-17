@@ -1,0 +1,9 @@
+[33mfb8f643[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Implement Orders Functionality for managers
+[33m370aac0[m Make Restrictions Middleware for Non related Groups-URLS
+[33mac135a1[m Modify Auth and Fix Login redirect for each group
+[33mb2c09d6[m Suppliers Feature Implemented
+[33mf51b948[m Complete CRUD for products and made Manager Dashboard
+[33mffe7641[m Make groups and started design Dashboards
+[33mb9d80e8[m Fixed issue of Authenticate for admin and employee
+[33md1ed520[m Added Middleware to Prevent Dashboard or Login
+[33ma5b1092[m Created Login System

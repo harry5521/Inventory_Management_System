@@ -35,22 +35,22 @@ class PurchaseOrderItemForm(forms.ModelForm):
             'product': forms.Select(attrs={'class': 'form-control'}),
             'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Quantity'}),
         }
-
         labels = {
             'product': 'Product',
             'quantity': 'Quantity',
-            }
+        }
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.fields['product'].queryset = Product.objects.all()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.all()
 
 
 PurchaseOrderItemFormSet = inlineformset_factory(
-    PurchaseOrder,
-    PurchaseOrderItem,
+    parent_model=PurchaseOrder,
+    model=PurchaseOrderItem,
     form=PurchaseOrderItemForm,
-    extra=5,  # Number of empty item rows shown
-    can_delete=False
+    extra=1,
+    can_delete=True,
+    validate_min=True,
+    min_num=1,
 )
-
