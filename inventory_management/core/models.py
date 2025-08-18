@@ -40,3 +40,17 @@ class Employee(AbstractUser):
         
     def __str__(self):
         return f"{self.full_name}"
+    
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='activity_logs')
+    action = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Activity Log'
+        verbose_name_plural = 'Activity Logs'
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.action} on {self.timestamp}"

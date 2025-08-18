@@ -43,6 +43,7 @@ class CreatePurchaseOrderView(CreateView):
         if item_formset.is_valid():
             item_formset.instance = self.object
             item_formset.save()
+            self.object.created_by = self.request.user
             self.object.update_total_amount()  # Update total amount after saving items
             return super().form_valid(form)   # ✅ go to success_url
         else:

@@ -87,6 +87,7 @@ class GroupNameBasedURLRestrictionMiddleware:
             'Moderator': '/moderator-dashboard/',
         }
 
+
         if request.user.is_authenticated:
             user_groups = [group.name for group in request.user.groups.all()]
             url_path = request.path
