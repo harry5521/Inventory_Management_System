@@ -19,7 +19,8 @@ class PurchaseOrder(models.Model):
     created_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True, related_name="created_orders")
     approved_by = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, blank=True, related_name="approved_orders")
     
-    order_date = models.DateField(auto_now_add=True)
+    created_date = models.DateField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
     
     status = models.CharField(max_length=10, default='pending')
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, default='cash')

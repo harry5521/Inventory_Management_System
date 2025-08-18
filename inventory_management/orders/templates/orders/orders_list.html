@@ -142,7 +142,13 @@
                         <td>{{ order.status }}</td>
                         <td>{{ order.payment_method }}</td>
                         <td>{{ order.total_amount }}</td>
-                        <td>{{ order.date }}</td>
+                        <td class="p-0 m-0">
+                            <div class="d-flex flex-column small">
+                                <span class="m-0 p-0">Cr:{{ order.created_date|date:"d M Y" }}</span>
+                                <span class="m-0 p-0">Md:{{ order.updated_date|date:"d M Y" }}</span>
+                            </div>
+                        </td>
+
                         <td>
                             <div class="d-flex gap-2 justify-content-center">
                                 <form action="{% url 'orders:update_order' order.pk %}" method="get">
@@ -168,7 +174,8 @@
                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                <p class="mb-0">Are you sure you want to delete <strong>{{ order.order_number}}</strong>?</p>
+                                                <p class="mb-0">Are you sure you want to delete <strong>{{
+                                                        order.order_number}}</strong>?</p>
                                             </div>
                                             <div class="modal-footer justify-content-center">
                                                 <button type="button" class="btn btn-secondary"

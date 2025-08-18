@@ -64,32 +64,34 @@ class PurchaseOrderUpdateView(UpdateView):
             )
         else:
             context["item_formset"] = PurchaseOrderItemFormSet(instance=self.object)
+        print(f'context = {context}')
         return context
+
 
     def form_valid(self, form):
         context = self.get_context_data()
         item_formset = context["item_formset"]
 
-        if form.is_valid() and item_formset.is_valid():
-            # ✅ Save the main PurchaseOrder
-            self.object = form.save()
+        # self.object must be set first
+        self.object = form.save(commit=False)
 
-            # ✅ Attach parent to formset and save children
+        if item_formset.is_valid():
+            self.object.save()  # ✅ save parent
             item_formset.instance = self.object
-            items = item_formset.save(commit=False)
+            self.object = form.save()  # save again with relations
 
-            # Save new/updated items
+            # Save children
+            items = item_formset.save(commit=False)
             for item in items:
                 item.save()
-
-            # Delete removed items
             for obj in item_formset.deleted_objects:
                 obj.delete()
 
-            # ✅ Recalculate total after all items are updated/deleted
+            # update total
             self.object.update_total_amount()
-
-            return super().form_valid(form)  # redirects to success_url
-        else:
-            # ❌ If errors, show page again with errors
-            return self.form_invalid(form)
+            return super().form_valid(form)
+        
+        print("Form errors:", form.errors)
+        print("Formset errors:", item_formset.errors)
+        print("Formset non-form errors:", item_formset.non_form_errors())
+        return self.form_invalid(form)  # ✅ go to form_invalid

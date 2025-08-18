@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="container mt-5">
+<div class="container my-5">
     <div class="card shadow-lg rounded-3">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <a href="{% url 'orders:orders_view' %}" class="btn btn-light btn-sm">
@@ -13,7 +13,7 @@
             <h2 class="mb-0">
                 {% if object %} ✏️ Edit Order {% else %} ➕ Create Order {% endif %}
             </h2>
-            <div></div> <!-- keeps spacing balanced -->
+            <div></div>
         </div>
 
         <div class="card-body">
@@ -45,6 +45,8 @@
 
                     {% for form in item_formset %}
                     <div class="card mb-3 p-3 border rounded shadow-sm">
+                        <!-- ✅ include hidden id for existing items -->
+                        {{ form.id }}
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -73,8 +75,8 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary w-25">Save</button>
                 </div>
             </form>
 
@@ -82,10 +84,7 @@
     </div>
 </div>
 
-
-
 {% endblock content %}
 
 {% block extra_scripts %}
-
 {% endblock extra_scripts %}
