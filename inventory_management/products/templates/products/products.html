@@ -4,11 +4,12 @@
 
 {% block content %}
 
-<div class="container py-4">
+<div class="container py-5">
     <!-- Page Title -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Manage Products</h2>
-        <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    <div class="mb-4 text-center">
+        <h2 class="fw-bold text-center text-dark p-3 rounded shadow">
+            <i class="bi bi-box-seam me-2"></i> Manage Products
+        </h2>
     </div>
 
     <!-- Product Create Form -->
@@ -74,8 +75,8 @@
         <form method="get" action="" class="d-flex justify-content-center m-4">
             <div class="input-group" style="max-width: 50%;">
                 <input type="search" name="search_product" value="{{ request.GET.search_product }}"
-                    class="form-control rounded-start-pill border-primary shadow-sm" placeholder="Enter Product name / SKU "
-                    aria-label="Search">
+                    class="form-control rounded-start-pill border-primary shadow-sm"
+                    placeholder="Enter Product name / SKU " aria-label="Search">
                 <button class="btn btn-primary rounded-end-pill px-4" type="submit">
                     <i class="bi bi-search"></i> <!-- optional icon if using Bootstrap Icons -->
                 </button>
@@ -112,7 +113,8 @@
                         <td>{{ product.reorder_level }}</td>
                         <td class="d-flex m-auto justify-content-center gap-2">
                             <form action="{% url 'products:edit_product' product.pk %}">
-                                <button type="submit" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                                <button type="submit" class="btn btn-warning btn-sm"><i
+                                        class="bi bi-pencil"></i></button>
                             </form>
 
                             <!-- Trigger Modal -->
@@ -133,8 +135,7 @@
                                                 data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body text-center">
-                                            <p class="mb-0">Are you sure you want to delete <strong>{{
-                                                    product.name}}</strong>?</p>
+                                            <p class="mb-0">Are you sure you want to delete <strong>{{ product.name}}</strong>?</p>
                                         </div>
                                         <div class="modal-footer justify-content-center">
                                             <button type="button" class="btn btn-secondary"

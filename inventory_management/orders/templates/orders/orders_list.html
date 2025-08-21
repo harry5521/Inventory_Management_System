@@ -1,6 +1,6 @@
 {% extends "manager_base.html" %}
 
-{% block title %}Manager - Products{% endblock title %}
+{% block title %}Manager - Orders{% endblock title %}
 
 {% block extra_head %}
 
@@ -79,9 +79,10 @@
 
 <div class="container py-5">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Manage Orders</h2>
-        <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+    <div class="mb-5 text-center">
+        <h2 class="fw-bold text-center text-dark p-3 rounded shadow">
+            <i class="bi bi-box-seam me-2"></i> Manage Orders
+        </h2>
     </div>
 
     <div class="d-flex justify-content-center my-4">
@@ -104,8 +105,8 @@
 
     <!-- Orders Table -->
     <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Order List</h5>
+        <div class="card-header bg-dark text-white text-center">
+            <h5 class="mb-0 fs-4" style="letter-spacing: 3px;">ORDERS LIST</h5>
         </div>
         <form method="get" action="" class="d-flex justify-content-center m-4">
             <div class="input-group" style="max-width: 60%;">
