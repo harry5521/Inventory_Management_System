@@ -1,20 +1,39 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseServerError
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views import View
 from .forms import PurchaseOrderForm, PurchaseOrderItemFormSet
 from .models import PurchaseOrder, PurchaseOrderItem
+from core.models import ActivityLog
+from django.db.models import Q
 
 # Create your views here.
 
 class ListPurchaseOrdersView(ListView):
     model = PurchaseOrder
     template_name = 'orders/orders_list.html'
-    context_object_name = 'orders'
 
-    def get_queryset(self):
-        return PurchaseOrder.objects.prefetch_related('items')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('search_order', '').strip()
+        orders = PurchaseOrder.objects.all()
+        if query:
+            orders = orders.filter(
+                Q(order_number__icontains=query) |
+                Q(supplier__name__icontains=query) |
+                Q(created_by__full_name__icontains=query) |
+                Q(approved_by__full_name__icontains=query)
+            )
+        context['orders'] = orders
+        return context
+    
+
+    # used for filter
+    # def get_queryset(self):
+    #     return PurchaseOrder.objects.all()
     
 class DeletePurchaseOrderView(DeleteView):
     model = PurchaseOrder
@@ -26,7 +45,15 @@ class CreatePurchaseOrderView(CreateView):
     model = PurchaseOrder
     form_class = PurchaseOrderForm
     template_name = 'orders/CreateUpdate_orders.html'
-    success_url = reverse_lazy('orders:orders_view')
+    # success_url = reverse_lazy('orders:orders_view')
+
+    def get_success_url(self):
+        user = self.request.user
+
+        if user.groups.filter(name="Manager").exists():
+            return reverse_lazy('orders:orders_view')
+        else:
+            return reverse_lazy('core:employee_dashboard')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -47,7 +74,7 @@ class CreatePurchaseOrderView(CreateView):
             self.object.update_total_amount()  # Update total amount after saving items
             return super().form_valid(form)   # ✅ go to success_url
         else:
-            return self.form_invalid(form)  
+            return self.form_invalid(form)
 
 
 class PurchaseOrderUpdateView(UpdateView):
@@ -96,3 +123,19 @@ class PurchaseOrderUpdateView(UpdateView):
         print("Formset errors:", item_formset.errors)
         print("Formset non-form errors:", item_formset.non_form_errors())
         return self.form_invalid(form)  # ✅ go to form_invalid
+    
+
+
+# @login_required
+def order_approved(request, pk):
+    order = get_object_or_404(PurchaseOrder, pk=pk)
+    order.status = "approved"
+    order.save()
+    return redirect('core:manager_dashboard')
+    
+# @login_required
+def order_canceled(request, pk):
+    order = get_object_or_404(PurchaseOrder, pk=pk)
+    order.status = "canceled"
+    order.save()
+    return redirect('core:manager_dashboard')

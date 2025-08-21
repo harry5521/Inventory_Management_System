@@ -27,5 +27,5 @@ urlpatterns = [
     path('manager-dashboard/orders/', include(('orders.urls', 'orders'), namespace='orders')),
 
     # Employee Links
-    path('employee-dashboard/order/', include(('orders.urls', 'orders'), namespace='orders')),
+    path('employee-dashboard/order/', include(('orders.urls', 'orders'), namespace='employee_orders')),
 ]

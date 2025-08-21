@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'core.middlewares.LoginRequiredMiddleware',
     'core.middlewares.LoginPageRestrictionMiddleware',
     'core.middlewares.GroupNameBasedURLRestrictionMiddleware',
+    # 'core.middlewares.CurrentUserMiddleware',
 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import FormView, DeleteView, UpdateView
 from .models import Product
 from .forms import ProductForm
+from django.db.models import Q
 
 # Create your views here.
 
@@ -19,7 +20,16 @@ class ProductView(FormView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['products'] = Product.objects.all()
+
+        query = self.request.GET.get('search_product', '').strip()
+        products = Product.objects.all()
+        if query:
+            products = Product.objects.filter(
+                Q(name__icontains=query) |
+                Q(sku__icontains=query)
+            )
+        
+        context['products'] = products
         return context
     
 

@@ -42,7 +42,7 @@
             <div class="card text-white bg-primary h-100">
                 <div class="card-body">
                     <h5 class="card-title">Total Products</h5>
-                    <h2 class="fw-bold">120</h2>
+                    <h2 class="fw-bold">{{ total_products.count }}</h2>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
             <div class="card text-white bg-success h-100">
                 <div class="card-body">
                     <h5 class="card-title">Suppliers</h5>
-                    <h2 class="fw-bold">15</h2>
+                    <h2 class="fw-bold">{{ total_suppliers.count }}</h2>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
             <div class="card text-white bg-warning h-100">
                 <div class="card-body">
                     <h5 class="card-title">Orders</h5>
-                    <h2 class="fw-bold">42</h2>
+                    <h2 class="fw-bold">{{ total_orders.count }}</h2>
                 </div>
             </div>
         </div>
@@ -78,44 +78,46 @@
         <div class="col-lg-8 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-light fw-bold">
-                    Recent Orders
+                    Recent Purchase Orders
                 </div>
+                {% if pending_orders|length == 0 %}
+                <div class="text-center fw-bold text-secondat my-3">
+                    No Pending Orders Available
+                </div>
+
+                {% else %}
                 <div class="card-body p-0">
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
-                                <th>Customer</th>
-                                <th>Product</th>
+                                <th>Order No</th>
+                                <th>Supplier</th>
                                 <th>Status</th>
+                                <th>Created By</th>
                                 <th>Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for order in pending_orders %}
                             <tr>
-                                <td>1</td>
-                                <td>John Doe</td>
-                                <td>Laptop</td>
-                                <td><span class="badge bg-success">Approved</span></td>
-                                <td>12 Aug 2025</td>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ order.order_number }}</td>
+                                <td>{{ order.supplier.name }}</td>
+                                <td><span class="badge bg-warning text-dark py-2">{{ order.status }}</span></td>
+                                <td>{{ order.created_by }}</td>
+                                <td>{{ order.created_date }}</td>
+                                <td>
+                                    <a href="{% url 'core:order_approved' order.pk %}" class="badge bg-success py-2 text-decoration-none">Approved</a>
+                                    <a href="{% url 'core:order_canceled' order.pk %}" class="badge bg-danger py-2 text-decoration-none">Canceled</a>
+                                </td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Sarah Lee</td>
-                                <td>Printer</td>
-                                <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                <td>11 Aug 2025</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Michael Smith</td>
-                                <td>Mouse</td>
-                                <td><span class="badge bg-danger">Cancelled</span></td>
-                                <td>10 Aug 2025</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                {% endif %}
             </div>
         </div>
 
@@ -126,17 +128,26 @@
                 <div class="card-header bg-light fw-bold">
                     Low Stock Alerts
                 </div>
+                {% if low_stock_products|length == 0 %}
+                    <div class="text-center fw-bold text-secondat my-3">No product has low stock</div>
+                {% else %}
+                
+                {% for product in low_stock_products %}
                 <ul class="list-group list-group-flush">
+                    {% comment %} {% if product.is_low_stock %} {% endcomment %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        USB Cable <span class="badge bg-danger">3 left</span>
+                        {{ product.name }} <a class="badge bg-danger">{{ product.stock_quantity }} left</a>
+                    </li>
+                    {% comment %} {% endif %} {% endcomment %}
+                    {% comment %} <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Keyboard <a class="badge bg-warning text-dark">5 left</a>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Keyboard <span class="badge bg-warning text-dark">5 left</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Headphones <span class="badge bg-warning text-dark">4 left</span>
+                        Headphones <a class="badge bg-warning text-dark">4 left</a> {% endcomment %}
                     </li>
                 </ul>
+                {% endfor %}
+                {% endif %}
             </div>
 
             <!-- Notifications -->

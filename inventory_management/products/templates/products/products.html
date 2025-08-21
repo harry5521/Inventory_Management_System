@@ -4,152 +4,163 @@
 
 {% block content %}
 
-    <div class="container py-5">
-        <!-- Page Title -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold">Manage Products</h2>
-            <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+<div class="container py-4">
+    <!-- Page Title -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Manage Products</h2>
+        <a href="{% url 'core:manager_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <!-- Product Create Form -->
+    <div class="card mb-5 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Add New Product</h5>
         </div>
-
-        <!-- Product Create Form -->
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Add New Product</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="d-flex d-flex-row justify-content-between">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.name.label }}</label>
-                                {{ form.name }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.sku.label }}</label>
-                                {{ form.sku }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.supplier.label }}</label>
-                                {{ form.supplier }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.category.label }}</label>
-                                {{ form.category }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.price.label }}</label>
-                                {{ form.price }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.stock_quantity.label }}</label>
-                                {{ form.stock_quantity }}
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">{{ form.reorder_level.label }}</label>
-                                {{ form.reorder_level }}
-                            </div>
-
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="d-flex d-flex-row justify-content-between">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
                         </div>
-                        <div class="col-md-4 mx-3">
-                            <label class="form-label">{{ form.description.label }}</label>
-                            {{ form.description }}
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.sku.label }}</label>
+                            {{ form.sku }}
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.supplier.label }}</label>
+                            {{ form.supplier }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.category.label }}</label>
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.price.label }}</label>
+                            {{ form.price }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.stock_quantity.label }}</label>
+                            {{ form.stock_quantity }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">{{ form.reorder_level.label }}</label>
+                            {{ form.reorder_level }}
+                        </div>
+
                     </div>
-                    <div class="mt-5 w-50 m-auto">
-                        <button type="submit" class="btn btn-success w-100"> {% if form.instance.pk %}Update Product{% else %}Add Product{% endif %}</button>
+                    <div class="col-md-4 mx-3">
+                        <label class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
                     </div>
-                </form>
-            </div>
+                </div>
+                <div class="mt-5 w-50 m-auto">
+                    <button type="submit" class="btn btn-success w-100"> {% if form.instance.pk %}Update Product{% else %}Add Product{% endif %}</button>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <!-- Products List Table -->
-        {% if form.instance.pk %}
-        
-        {% else %}
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Product List</h5>
+    <!-- Products List Table -->
+    {% if form.instance.pk %}
+
+    {% else %}
+    <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Product List</h5>
+        </div>
+        <form method="get" action="" class="d-flex justify-content-center m-4">
+            <div class="input-group" style="max-width: 50%;">
+                <input type="search" name="search_product" value="{{ request.GET.search_product }}"
+                    class="form-control rounded-start-pill border-primary shadow-sm" placeholder="Enter Product name / SKU "
+                    aria-label="Search">
+                <button class="btn btn-primary rounded-end-pill px-4" type="submit">
+                    <i class="bi bi-search"></i> <!-- optional icon if using Bootstrap Icons -->
+                </button>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0 text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>SKU</th>
-                            <th>Supplier</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Total</th>
-                            <th>Reorder Level</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in products %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.sku }}</td>
-                            <td>{{ product.supplier.name }}</td>
-                            <td>{{ product.category.name }}</td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.stock_quantity }}</td>
-                            <td>{{ product.total_stock_value }}</td>
-                            <td>{{ product.reorder_level }}</td>
-                            <td class="d-flex m-auto justify-content-center gap-2">
-                                <form action="{% url 'products:edit_product' product.pk %}" >
-                                    <button type="submit" class="btn btn-warning btn-sm">Edit</button>
-                                </form>
+        </form>
 
-                                <!-- Trigger Modal -->
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal{{ product.pk }}">
-                                    Delete
-                                </button>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>SKU</th>
+                        <th>Supplier</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Total</th>
+                        <th>Reorder Level</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.sku }}</td>
+                        <td>{{ product.supplier.name }}</td>
+                        <td>{{ product.category.name }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.stock_quantity }}</td>
+                        <td>{{ product.total_stock_value }}</td>
+                        <td>{{ product.reorder_level }}</td>
+                        <td class="d-flex m-auto justify-content-center gap-2">
+                            <form action="{% url 'products:edit_product' product.pk %}">
+                                <button type="submit" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
+                            </form>
 
-                                <!-- Delete Confirmation Modal -->
-                                <div class="modal fade" id="deleteModal{{ product.pk }}" tabindex="-1"
-                                    aria-labelledby="deleteModalLabel{{ product.pk }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered"> <!-- Centered vertically -->
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-danger text-white">
-                                                <h5 class="modal-title" id="deleteModalLabel{{ product.pk }}">Confirm
-                                                    Deletion</h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body text-center">
-                                                <p class="mb-0">Are you sure you want to delete <strong>{{ product.name}}</strong>?</p>
-                                            </div>
-                                            <div class="modal-footer justify-content-center">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{% url 'products:delete_product' product.pk %}"
-                                                    method="post">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                                </form>
-                                            </div>
+                            <!-- Trigger Modal -->
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal{{ product.pk }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal{{ product.pk }}" tabindex="-1"
+                                aria-labelledby="deleteModalLabel{{ product.pk }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered"> <!-- Centered vertically -->
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ product.pk }}">Confirm
+                                                Deletion</h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p class="mb-0">Are you sure you want to delete <strong>{{
+                                                    product.name}}</strong>?</p>
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                            <form action="{% url 'products:delete_product' product.pk %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-                            </td>
+                            </div>
+                        </td>
 
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-3">No products available.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-3">No products available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        {% endif %}
-
     </div>
+    {% endif %}
+
+</div>
 
 {% endblock content %}

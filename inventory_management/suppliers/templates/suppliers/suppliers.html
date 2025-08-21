@@ -93,13 +93,13 @@
                             <td class="d-flex m-auto justify-content-center gap-2">
                                 <form action="{% url 'suppliers:edit_supplier' supplier.pk %}" >
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-warning btn-sm">Edit</button>
+                                    <button type="submit" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
                                 </form>
 
                                 <!-- Trigger Modal -->
                                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#deleteModal{{ supplier.pk }}">
-                                    Delete
+                                    <i class="bi bi-trash"></i>
                                 </button>
 
                                 <!-- Delete Confirmation Modal -->

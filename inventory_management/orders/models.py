@@ -7,6 +7,12 @@ from suppliers.models import Supplier
 
 
 class PurchaseOrder(models.Model):
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("canceled", "Canceled"),
+    ]
     
     PAYMENT_METHODS = [
         ('cash', 'Cash'),
@@ -22,7 +28,7 @@ class PurchaseOrder(models.Model):
     created_date = models.DateField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     
-    status = models.CharField(max_length=10, default='pending')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     payment_method = models.CharField(max_length=10, choices=PAYMENT_METHODS, default='cash')
     notes = models.TextField(blank=True)
 
@@ -31,6 +37,25 @@ class PurchaseOrder(models.Model):
     def update_total_amount(self):
         self.total_amount = sum(item.total_price for item in self.items.all())
         self.save()
+    
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.order_number:
+            last_order = PurchaseOrder.objects.all().order_by('id').last()
+            if last_order and last_order.order_number:
+                try:
+                    last_id = int(last_order.order_number.split('-')[1])
+                except:
+                    last_id = 0
+                self.order_number = f"ORDER-{last_id + 1}"
+            else:
+                self.order_number = "ORDER-1"
+        
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'Purchase Orders'
+        verbose_name_plural = 'Purchase Orders'
+        ordering = ['-created_date']
 
     def __str__(self):
         return f"Order {self.order_number} - {self.supplier.name}"

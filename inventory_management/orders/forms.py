@@ -8,15 +8,13 @@ from .models import PurchaseOrder, PurchaseOrderItem
 class PurchaseOrderForm(forms.ModelForm):
     class Meta:
         model = PurchaseOrder
-        fields = ['order_number', 'supplier', 'payment_method', 'notes']
+        fields = ['supplier', 'payment_method', 'notes']
         widgets = {
-            'order_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Order Number'}),
             'supplier': forms.Select(attrs={'class': 'form-control'}),
             'payment_method': forms.Select(attrs={'class': 'form-control'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter Notes'}),
         }
         labels = {
-            'order_number': 'Order Number',
             'supplier': 'Supplier',
             'payment_method': 'Payment Method',
             'notes': 'Notes',

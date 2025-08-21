@@ -107,6 +107,16 @@
         <div class="card-header bg-dark text-white">
             <h5 class="mb-0">Order List</h5>
         </div>
+        <form method="get" action="" class="d-flex justify-content-center m-4">
+            <div class="input-group" style="max-width: 60%;">
+                <input type="search" name="search_order" value="{{ request.GET.search_order }}"
+                    class="form-control rounded-start-pill border-primary shadow-sm" placeholder="Enter Order No / Supplier / Created By / Approved By "
+                    aria-label="Search">
+                <button class="btn btn-dark rounded-end-pill px-4" type="submit">
+                    <i class="bi bi-search"></i> <!-- optional icon if using Bootstrap Icons -->
+                </button>
+            </div>
+        </form>
         <div class="table-responsive">
             <table class="table table-striped align-middle text-center mb-0">
                 <thead>
@@ -139,7 +149,18 @@
                         <td>{{ order.supplier.name }}</td>
                         <td>{{ order.created_by }}</td>
                         <td>{{ order.approved_by }}</td>
-                        <td>{{ order.status }}</td>
+                        <td>
+                            {% if order.status == "pending" %}
+                            <span class="badge bg-warning text-dark p-2">{{ order.status|title }}</span>
+                            {% elif order.status == "approved" %}
+                            <span class="badge bg-success p-2">{{ order.status|title }}</span>
+                            {% elif order.status == "canceled" %}
+                            <span class="badge bg-danger p-2">{{ order.status|title }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary p-2">{{ order.status|title }}</span>
+                            {% endif %}
+                        </td>
+
                         <td>{{ order.payment_method }}</td>
                         <td>{{ order.total_amount }}</td>
                         <td class="p-0 m-0">
@@ -153,13 +174,13 @@
                             <div class="d-flex gap-2 justify-content-center">
                                 <form action="{% url 'orders:update_order' order.pk %}" method="get">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-warning btn-sm">Update</button>
+                                    <button type="submit" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></button>
                                 </form>
 
                                 <!-- Trigger Modal -->
                                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#deleteModal{{ order.pk }}">
-                                    Delete
+                                    <i class="bi bi-trash"></i>
                                 </button>
 
                                 <!-- Delete Confirmation Modal -->

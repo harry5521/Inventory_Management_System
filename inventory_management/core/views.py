@@ -8,6 +8,10 @@ from .models import Employee
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
+from orders.models import PurchaseOrder
+from suppliers.models import Supplier
+from products.models import Product
+from django.db.models import F
 
 # Create your views here.
 
@@ -59,8 +63,20 @@ class EmployeeDashboardView(TemplateView):
 class ManagerDashboardView(TemplateView):
     template_name = 'core/managers_dashboard.html'
 
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['pending_orders'] = PurchaseOrder.objects.filter(status='pending')
+        context['total_orders'] = PurchaseOrder.objects.filter(status='approved')
+        context['total_suppliers'] = Supplier.objects.all()
+        context['total_products'] = Product.objects.all()
+        context['low_stock_products'] = Product.objects.filter(stock_quantity__lte=F('reorder_level'))
+        return context
+
 class ModeratorDashboardView(TemplateView):
     template_name = 'core/moderator_dashboard.html'
+
+    
 
 
 class EmployeeLogoutView(View):
